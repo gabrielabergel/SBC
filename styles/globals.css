@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+/* ===================== */
+/* 🌐 Variables globales */
+/* ===================== */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: 'Exposure', serif;
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* ===================== */
+/* 📏 Base & Reset       */
+/* ===================== */
+html, body, #__next {
+  height: 100%;
+  position: relative;
+  overscroll-behavior: none;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Exposure', serif;
+  line-height: 1;
+}
+
+/* ===================== */
+/* 🔤 Fonts custom       */
+/* ===================== */
+@font-face {
+  font-family: 'Exposure';
+  src: url('/fonts/ExposureTrial[-10].otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exposure';
+  src: url('/fonts/ExposureTrial[-40].otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exposure';
+  src: url('/fonts/ExposureItalicTrial[-10].otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exposure';
+  src: url('/fonts/ExposureItalicTrial[-40].otf') format('opentype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ===================== */
+/* 🧬 Utilitaires typo   */
+/* ===================== */
+.font-italic {
+  font-style: italic !important;
+}
+
+/* ===================== */
+/* 🎞️ Animations        */
+/* ===================== */
+@keyframes fadein {
+  0% {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+  }
+}
+
+@keyframes line-drop {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes dashAppear {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.fade-start {
+  opacity: 0;
+}
+
+.animate-fadein {
+  animation: fadein 0.6s ease-out forwards;
+}
+
+.animate-line-drop {
+  animation: line-drop 0.3s ease-out forwards;
+  transform-origin: top;
+}
+
+/* ===================== */
+/* 📐 Info panel trait   */
+/* ===================== */
+.info-line-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  z-index: 25;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.info-panel-line {
+  position: absolute;
+  top: 0;
+  height: 12px;
+  width: 1px;
+  background-color: black;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+/* ===================== */
+/* 🫥 Masquage titre     */
+/* ===================== */
+.hide-title .home-title {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* ===================== */
+/* ⏳ Delays             */
+/* ===================== */
+.delay-1 { animation-delay: 0.4s; }
+.delay-2 { animation-delay: 0.6s; }
+.delay-3 { animation-delay: 0.8s; }
+.delay-4 { animation-delay: 1s; }
+
+.delay-line-1 { animation-delay: 0.2s; }
+.delay-line-2 { animation-delay: 0.4s; }
+.delay-line-3 { animation-delay: 0.6s; }
+.delay-line-4 { animation-delay: 0.8s; }
+
+/* =============================== */
+/* ✅ Optimisations mobile & GPU  */
+/* =============================== */
+.interactive-zone {
+  touch-action: none;
+}
+
+.will-change-transform {
+  will-change: transform;
+}
+
+/* =============================== */
+/* 🖱️ Curseur timeline            */
+/* =============================== */
+[data-cursor="timeline"] {
+  cursor: grab;
+}
+
+[data-cursor="timeline"]:active {
+  cursor: grabbing;
+}
