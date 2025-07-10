@@ -19,7 +19,7 @@ export default function TimelineText({ scrollX, showInfo }) {
   if (!showInfo || typeof scrollX !== 'number' || isNaN(scrollX) || windowWidth === 0) return null
 
   const sectionWidth = VIGNETTE_WIDTH * NUM_ENTRIES
-  const markerOffset = windowWidth >= 768 ? VIGNETTE_WIDTH / 2 : 0 // ← ⬅︎ clé : desktop = centré, mobile = gauche
+  const markerOffset = windowWidth >= 768 ? VIGNETTE_WIDTH / 2 : 0
   const relativeX = ((scrollX % sectionWidth) + sectionWidth) % sectionWidth
   const index = Math.floor((relativeX + markerOffset) / VIGNETTE_WIDTH)
   const clampedIndex = Math.max(0, Math.min(index, NUM_ENTRIES - 1))
@@ -29,8 +29,8 @@ export default function TimelineText({ scrollX, showInfo }) {
 
   return (
     <div
-      className={`absolute top-[calc(50%+57px)] z-30 pointer-events-none ${
-        windowWidth >= 768 ? 'left-1/2 w-[320px]' : 'left-4 w-[calc(100%-2rem)]'
+      className={`absolute top-[calc(50%+60px)] z-30 pointer-events-none ${
+        windowWidth >= 768 ? 'left-1/2 w-[320px] -translate-x-1/2' : 'left-4 w-[calc(100%-2rem)]'
       }`}
     >
       <div className="relative text-left pointer-events-auto text-[12px] md:text-xs text-black font-normal leading-[1.2] md:leading-tight space-y-[0.05rem]">

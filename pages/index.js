@@ -17,6 +17,7 @@ export default function Home() {
   const [isDesktop, setIsDesktop] = useState(true)
 
   const videoRef = useRef(null)
+  const timelineRef = useRef(null) // ✅ Nouveau ref
 
   const toggleInfo = () => setShowInfo(prev => !prev)
 
@@ -113,6 +114,7 @@ export default function Home() {
           )
         }
         showInfo={showInfo}
+        timelineRef={timelineRef} // ✅ Passage du ref à TimelineScroll
       />
 
       {isDesktop && (
@@ -129,7 +131,13 @@ export default function Home() {
         </div>
       )}
 
-      {showInfo && <TimelineText scrollX={scrollX} showInfo={showInfo} />}
+      {showInfo && (
+        <TimelineText
+          scrollX={scrollX}
+          showInfo={showInfo}
+          timelineRef={timelineRef} // ✅ Passage du ref à TimelineText
+        />
+      )}
 
       {!isDesktop && (
         <>

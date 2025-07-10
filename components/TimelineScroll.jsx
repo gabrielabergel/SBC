@@ -32,6 +32,7 @@ export default function TimelineScroll({
   const [internalTime, setInternalTime] = useState(0)
   const [isDesktop, setIsDesktop] = useState(true)
   const [showFrise, setShowFrise] = useState(true)
+  const [timelineTop, setTimelineTop] = useState('50%')
 
   const wasPlayingBeforeDrag = useRef(false)
   const continuousPosition = useRef(0)
@@ -39,12 +40,14 @@ export default function TimelineScroll({
   const skipNextSyncRef = useRef(false)
   const initialScrollDone = useRef(false)
 
-  const baseThumbs = useMemo(() =>
-    Array.from({ length: NUM_THUMBS }, (_, i) => ({
-      src: `/thumbs/thumb_${String(i).padStart(3, '0')}.jpg`,
-      time: ((i + 1) * duration) / (NUM_THUMBS + 1),
-    }))
-  , [duration])
+  const baseThumbs = useMemo(
+    () =>
+      Array.from({ length: NUM_THUMBS }, (_, i) => ({
+        src: `/thumbs/thumb_${String(i).padStart(3, '0')}.jpg`,
+        time: ((i + 1) * duration) / (NUM_THUMBS + 1),
+      })),
+    [duration]
+  )
 
   const thumbs = [...baseThumbs, ...baseThumbs, ...baseThumbs]
   const sectionWidth = sectionWidthRef.current
@@ -170,54 +173,48 @@ export default function TimelineScroll({
     }
   }, [isDragging])
 
+  // Centrage timeline + barre d'info haute calée sur elle
+  useEffect(() => {
+    const updateTimelinePosition = () => {
+      if (videoRef.current) {
+        const rect = videoRef.current.getBoundingClientRect()
+        const middle = rect.top + rect.height / 2
+        setTimelineTop(`${middle}px`)
+      }
+    }
+
+    updateTimelinePosition()
+    window.addEventListener('resize', updateTimelinePosition)
+    return () => window.removeEventListener('resize', updateTimelinePosition)
+  }, [videoRef])
+
   return (
-    <div className="absolute top-1/2 left-0 w-full h-20 -translate-y-1/2 z-30 pointer-events-none">
-      {/* Compteur à gauche */}
+    <div
+      ref={(el) => {
+        wrapperRef.current = el
+        timelineRef.current = el
+      }}
+      className="absolute left-0 w-full h-20 z-30 pointer-events-none"
+      style={{ top: timelineTop, transform: 'translateY(-50%)' }}
+    >
+      {/* Barre du haut calée juste au-dessus de la timeline */}
       {(isDesktop || showFrise) && (
-        <div className="absolute left-4 top-[-25px] z-40 pointer-events-none">
+        <div
+          className="absolute left-4 right-4 z-40 flex items-center justify-between pointer-events-auto"
+          style={{ top: '-20px' }} // 👈 ajuste ici si tu veux rapprocher/éloigner la barre de la timeline
+        >
           <div className="text-xs font-semibold text-black select-none">
             {formatTime(internalTime)}
           </div>
-        </div>
-      )}
 
-      {/* Mute bouton à droite (desktop seulement) */}
-      {isDesktop && (
-        <div className="absolute right-4 top-[-20px] z-60 pointer-events-auto">
-          {muteControl}
-        </div>
-      )}
-
-      {/* Flèche à droite (mobile seulement, si showInfo) */}
-      {!isDesktop && showInfo && (
-        <div className="absolute right-4 top-[-30px] z-0 pointer-events-auto">
-          <button
-            onClick={() => {
-              const container = document.querySelector('[data-infoscroll]')
-              if (!container) return
-              const slideWidth = window.innerWidth
-              const maxScroll = slideWidth * 3
-              const current = container.scrollLeft
-              if (current >= maxScroll - 10) {
-                container.scrollTo({ left: 0, behavior: 'smooth' })
-              } else {
-                container.scrollBy({ left: slideWidth, behavior: 'smooth' })
-              }
-            }}
-            className="text-black bg-transparent p-0.5"
-            aria-label="Slide suivante"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                 strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-3 leading-none">
+            {muteControl}
+          </div>
         </div>
       )}
 
       {/* Timeline */}
       <div
-        ref={(el) => { wrapperRef.current = el; timelineRef.current = el }}
         className="w-full h-full overflow-hidden pointer-events-auto interactive-zone"
         onMouseDown={(e) => handleStart(e.clientX)}
         onMouseMove={(e) => isDragging && handleMove(e.clientX)}
