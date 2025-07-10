@@ -60,11 +60,11 @@ export default function CustomCursor({ isOpen }) {
     if (mode === 'none') return null
 
     if (mode === 'left') {
-      return <img src="/public/rewind.png" alt="rewind" className="w-4 h-4" />
+      return <img src="/icons/rewind.png" alt="rewind" className="w-4 h-4" />
     }
 
     if (mode === 'right') {
-      return <img src="/public/forward.png" alt="forward" className="w-4 h-4" />
+      return <img src="/icons/forward.png" alt="forward" className="w-4 h-4" />
     }
 
     if (mode === 'timeline') {

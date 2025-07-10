@@ -35,7 +35,7 @@ export default function TimelineText({ scrollX, showInfo }) {
     >
       <div className="relative text-left pointer-events-auto text-[12px] md:text-xs text-black font-normal leading-[1.2] md:leading-tight space-y-[0.05rem]">
         <img
-          src="/public/markerprojects.png"
+          src="/icons/markerprojects.png"
           alt="Repère texte"
           className="absolute -top-22 left-0 h-19 w-auto"
           draggable="false"
