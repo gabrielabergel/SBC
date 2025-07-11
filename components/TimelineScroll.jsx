@@ -22,10 +22,11 @@ export default function TimelineScroll({
   videoRef,
   onScrollUpdate,
   showInfo,
+  timelineRef // 👈 ici on accepte la ref externe
 }) {
   const wrapperRef = useRef(null)
   const friseRef = useRef(null)
-  const timelineRef = useRef(null)
+  const internalRef = useRef(null)
   const hideTimer = useRef(null)
 
   const [isDragging, setIsDragging] = useState(false)
@@ -73,14 +74,14 @@ export default function TimelineScroll({
     setIsDragging(true)
     wasPlayingBeforeDrag.current = !videoRef.current.paused
     videoRef.current.pause()
-    timelineRef.current.setAttribute('data-start-x', clientX)
-    timelineRef.current.setAttribute('data-start-scroll', continuousPosition.current)
+    internalRef.current.setAttribute('data-start-x', clientX)
+    internalRef.current.setAttribute('data-start-scroll', continuousPosition.current)
   }
 
   const handleMove = (clientX) => {
     if (!isDragging || !duration) return
-    const startX = parseFloat(timelineRef.current.getAttribute('data-start-x'))
-    const startScroll = parseFloat(timelineRef.current.getAttribute('data-start-scroll'))
+    const startX = parseFloat(internalRef.current.getAttribute('data-start-x'))
+    const startScroll = parseFloat(internalRef.current.getAttribute('data-start-scroll'))
     const dx = clientX - startX
     const newScrollX = startScroll - dx
     const relative = ((newScrollX % sectionWidth) + sectionWidth) % sectionWidth
@@ -173,7 +174,6 @@ export default function TimelineScroll({
     }
   }, [isDragging])
 
-  // Centrage timeline + barre d'info haute calée sur elle
   useEffect(() => {
     const updateTimelinePosition = () => {
       if (videoRef.current) {
@@ -182,7 +182,6 @@ export default function TimelineScroll({
         setTimelineTop(`${middle}px`)
       }
     }
-
     updateTimelinePosition()
     window.addEventListener('resize', updateTimelinePosition)
     return () => window.removeEventListener('resize', updateTimelinePosition)
@@ -192,28 +191,24 @@ export default function TimelineScroll({
     <div
       ref={(el) => {
         wrapperRef.current = el
-        timelineRef.current = el
+        internalRef.current = el
+        if (timelineRef) timelineRef.current = el // 👈 ref externe connectée
       }}
       className="absolute left-0 w-full h-20 z-30 pointer-events-none"
       style={{ top: timelineTop, transform: 'translateY(-50%)' }}
     >
-      {/* Barre du haut calée juste au-dessus de la timeline */}
       {(isDesktop || showFrise) && (
         <div
           className="absolute left-4 right-4 z-40 flex items-center justify-between pointer-events-auto"
-          style={{ top: '-20px' }} // 👈 ajuste ici si tu veux rapprocher/éloigner la barre de la timeline
+          style={{ top: '-20px' }}
         >
           <div className="text-xs font-semibold text-black select-none">
             {formatTime(internalTime)}
           </div>
-
-          <div className="flex items-center gap-3 leading-none">
-            {muteControl}
-          </div>
+          <div className="flex items-center gap-3 leading-none">{muteControl}</div>
         </div>
       )}
 
-      {/* Timeline */}
       <div
         className="w-full h-full overflow-hidden pointer-events-auto interactive-zone"
         onMouseDown={(e) => handleStart(e.clientX)}
@@ -224,7 +219,9 @@ export default function TimelineScroll({
       >
         <div
           ref={friseRef}
-          className={`absolute top-0 left-0 h-full flex items-center will-change-transform transition-opacity duration-500 ease-in-out interactive-zone ${showFrise ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute top-0 left-0 h-full flex items-center will-change-transform transition-opacity duration-500 ease-in-out interactive-zone ${
+            showFrise ? 'opacity-100' : 'opacity-0'
+          }`}
           style={{ width: `${totalWidth}px` }}
         >
           {thumbs.map((thumb, index) => (

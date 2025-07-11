@@ -6,8 +6,9 @@ import data from '../data/projects'
 const VIGNETTE_WIDTH = 50
 const NUM_ENTRIES = 51
 
-export default function TimelineText({ scrollX, showInfo }) {
+export default function TimelineText({ scrollX, showInfo, timelineRef }) {
   const [windowWidth, setWindowWidth] = useState(0)
+  const [timelineTop, setTimelineTop] = useState('50%')
 
   useEffect(() => {
     const updateWidth = () => setWindowWidth(window.innerWidth)
@@ -15,6 +16,18 @@ export default function TimelineText({ scrollX, showInfo }) {
     window.addEventListener('resize', updateWidth)
     return () => window.removeEventListener('resize', updateWidth)
   }, [])
+
+  useEffect(() => {
+    const updatePosition = () => {
+      if (timelineRef?.current) {
+        const rect = timelineRef.current.getBoundingClientRect()
+        setTimelineTop(`${rect.bottom + 10}px`) // 10px sous la timeline
+      }
+    }
+    updatePosition()
+    window.addEventListener('resize', updatePosition)
+    return () => window.removeEventListener('resize', updatePosition)
+  }, [timelineRef])
 
   if (!showInfo || typeof scrollX !== 'number' || isNaN(scrollX) || windowWidth === 0) return null
 
@@ -29,18 +42,19 @@ export default function TimelineText({ scrollX, showInfo }) {
 
   return (
     <div
-      className={`absolute top-[calc(50%+60px)] z-30 pointer-events-none ${
-        windowWidth >= 768 ? 'left-1/2 w-[320px] -translate-x-1/2' : 'left-4 w-[calc(100%-2rem)]'
-      }`}
+      className="fixed z-30 pointer-events-none w-full transition-all duration-300"
+      style={{ top: timelineTop }}
     >
-      <div className="relative text-left pointer-events-auto text-[12px] md:text-xs text-black font-normal leading-[1.2] md:leading-tight space-y-[0.05rem]">
-        <img
-          src="/icons/markerprojects.png"
-          alt="Repère texte"
-          className="absolute -top-22 left-0 h-19 w-auto"
-          draggable="false"
-        />
+      <div
+        className={`relative pointer-events-auto text-[12px] md:text-xs text-black font-normal leading-[1.2] md:leading-tight space-y-[0.05rem] px-4 md:px-0 ${
+windowWidth >= 768
+  ? 'w-[320px] text-left absolute left-1/2'
+  : 'w-full text-left px-4'
+        }`}
+      >
+       <div className="absolute -top-5 left-4 md:left-1/2 md:-translate-x-[160px] w-[1px] h-5 bg-black" />
 
+<div className="pt-2"></div>
         {entry.project && <p><span className="font-semibold">Project:</span> {entry.project}</p>}
         {entry.client && <p><span className="font-semibold">Client:</span> {entry.client}</p>}
         {entry.director && <p><span className="font-semibold">Director:</span> {entry.director}</p>}

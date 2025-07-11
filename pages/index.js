@@ -17,7 +17,7 @@ export default function Home() {
   const [isDesktop, setIsDesktop] = useState(true)
 
   const videoRef = useRef(null)
-  const timelineRef = useRef(null) // ✅ Nouveau ref
+  const timelineRef = useRef(null) // ✅ Ref commune à TimelineScroll & TimelineText
 
   const toggleInfo = () => setShowInfo(prev => !prev)
 
@@ -80,6 +80,7 @@ export default function Home() {
         toggleInfo={toggleInfo}
       />
 
+      {/* Titre centré ou à gauche selon l'état du panneau info */}
       <div
         className={`home-title absolute z-30 text-xs font-semibold tracking-widest text-black transition-all duration-500 ${
           isDesktop
@@ -90,6 +91,7 @@ export default function Home() {
         SAMY BOUARD CART
       </div>
 
+      {/* Timeline */}
       <TimelineScroll
         currentTime={currentTime}
         duration={duration}
@@ -114,9 +116,10 @@ export default function Home() {
           )
         }
         showInfo={showInfo}
-        timelineRef={timelineRef} // ✅ Passage du ref à TimelineScroll
+        timelineRef={timelineRef} // ✅ utilisé pour caler TimelineText
       />
 
+      {/* Bouton play/pause (desktop) */}
       {isDesktop && (
         <div className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 pointer-events-auto">
           <button
@@ -131,14 +134,16 @@ export default function Home() {
         </div>
       )}
 
+      {/* TimelineText calée dynamiquement sous la timeline */}
       {showInfo && (
         <TimelineText
           scrollX={scrollX}
           showInfo={showInfo}
-          timelineRef={timelineRef} // ✅ Passage du ref à TimelineText
+          timelineRef={timelineRef}
         />
       )}
 
+      {/* Boutons play/mute (mobile) */}
       {!isDesktop && (
         <>
           <button
@@ -163,6 +168,7 @@ export default function Home() {
         </>
       )}
 
+      {/* Panneaux Info */}
       {showInfo && (
         isDesktop ? (
           <InfoPanel onClose={toggleInfo} />
@@ -171,6 +177,7 @@ export default function Home() {
         )
       )}
 
+      {/* Bouton "Plus"/"Fermer" en haut à droite (mobile uniquement) */}
       {!isDesktop && (
         <div className="fixed top-3 right-4 z-50 md:hidden">
           <button
