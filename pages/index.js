@@ -7,8 +7,8 @@ import InfoPanel from '../components/InfoPanel'
 import InfoPanelMobile from '../components/InfoPanelMobile'
 import TimelineText from '../components/TimelineText'
 
-export default function Home() {
-  const [showInfo, setShowInfo] = useState(false)
+
+export default function Home({ showInfo, toggleInfo }) {
   const [isMuted, setIsMuted] = useState(true)
   const [isPlaying, setIsPlaying] = useState(true)
   const [currentTime, setCurrentTime] = useState(0)
@@ -17,9 +17,8 @@ export default function Home() {
   const [isDesktop, setIsDesktop] = useState(true)
 
   const videoRef = useRef(null)
-  const timelineRef = useRef(null) // ✅ Ref commune à TimelineScroll & TimelineText
+  const timelineRef = useRef(null)
 
-  const toggleInfo = () => setShowInfo(prev => !prev)
 
   useEffect(() => {
     const checkScreen = () => {
@@ -73,6 +72,8 @@ export default function Home() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-white">
+   
+
       <VideoPlayer
         onTimeUpdate={handleTimeUpdate}
         videoRef={videoRef}
@@ -80,7 +81,6 @@ export default function Home() {
         toggleInfo={toggleInfo}
       />
 
-      {/* Titre centré ou à gauche selon l'état du panneau info */}
       <div
         className={`home-title absolute z-30 text-xs font-semibold tracking-widest text-black transition-all duration-500 ${
           isDesktop
@@ -91,7 +91,6 @@ export default function Home() {
         SAMY BOUARD CART
       </div>
 
-      {/* Timeline */}
       <TimelineScroll
         currentTime={currentTime}
         duration={duration}
@@ -116,10 +115,9 @@ export default function Home() {
           )
         }
         showInfo={showInfo}
-        timelineRef={timelineRef} // ✅ utilisé pour caler TimelineText
+        timelineRef={timelineRef}
       />
 
-      {/* Bouton play/pause (desktop) */}
       {isDesktop && (
         <div className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 pointer-events-auto">
           <button
@@ -134,7 +132,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* TimelineText calée dynamiquement sous la timeline */}
       {showInfo && (
         <TimelineText
           scrollX={scrollX}
@@ -143,7 +140,6 @@ export default function Home() {
         />
       )}
 
-      {/* Boutons play/mute (mobile) */}
       {!isDesktop && (
         <>
           <button
@@ -168,7 +164,6 @@ export default function Home() {
         </>
       )}
 
-      {/* Panneaux Info */}
       {showInfo && (
         isDesktop ? (
           <InfoPanel onClose={toggleInfo} />
@@ -177,11 +172,11 @@ export default function Home() {
         )
       )}
 
-      {/* Bouton "Plus"/"Fermer" en haut à droite (mobile uniquement) */}
       {!isDesktop && (
         <div className="fixed top-3 right-4 z-50 md:hidden">
           <button
             onClick={toggleInfo}
+            data-cursor="close"
             className="text-black text-[26px] leading-none transition-transform duration-300"
             aria-label={showInfo ? 'Fermer le panneau info' : 'Ouvrir le panneau info'}
             style={{ transform: showInfo ? 'rotate(45deg)' : 'rotate(0deg)' }}

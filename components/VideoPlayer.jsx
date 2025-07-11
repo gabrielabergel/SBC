@@ -43,25 +43,24 @@ export default function VideoPlayer({ onTimeUpdate, videoRef, showInfo, toggleIn
     ? '/video/SBC_Showreel_Home.mp4'
     : '/video/SBC_Showreel_Mobile.mp4'
 
-  const handleVideoClick = (e) => {
-    if (isDesktop && !showInfo) {
-      toggleInfo()
-    } else if (isDesktop && showInfo) {
-      toggleInfo()
-    }
+  const handleClick = () => {
+    if (isDesktop) toggleInfo()
   }
 
   return (
     <div className="fixed inset-0 z-10 overflow-hidden">
-      {/* Clique sur la vidéo → toggleInfo (desktop only) */}
-      <div className="absolute inset-0 z-10" onClick={handleVideoClick} />
+      {isDesktop && (
+        <div
+          className="absolute inset-0 z-10"
+          onClick={handleClick}
+          data-cursor={showInfo ? 'close' : 'info'}
+        />
+      )}
 
-      {/* Fond blanc semi-transparent quand le panneau est ouvert */}
       {showInfo && (
         <div className="absolute inset-0 z-10 bg-white/40 pointer-events-none transition-opacity duration-100" />
       )}
 
-      {/* Vidéo centrée */}
       <div
         className={`w-full h-full flex justify-center items-center transition duration-100 will-change-transform ${
           showInfo ? 'blur-xl scale-[1.001]' : ''
